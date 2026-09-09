@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Günlük Sayaç</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    :root {
+        --accent: #7c5cff;
+        --accent2: #a78bfa;
+        --bg: #08090d;
+        --card: rgba(20, 22, 31, 0.82);
+        --text: #ffffff;
+        --muted: #9296a5;
+    }
+
+    body {
+        min-height: 100vh;
+        font-family: Arial, Helvetica, sans-serif;
+        background:
+            radial-gradient(circle at 20% 20%, rgba(124,92,255,.18), transparent 30%),
+            radial-gradient(circle at 80% 80%, rgba(167,139,250,.12), transparent 30%),
+            var(--bg);
+        color: var(--text);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    .container {
+        width: min(92%, 520px);
+        text-align: center;
+    }
+
+    .logo {
+        width: 68px;
+        height: 68px;
+        margin: 0 auto 18px;
+        border-radius: 22px;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        box-shadow: 0 15px 45px rgba(124,92,255,.28);
+    }
+
+    h1 {
+        font-size: 34px;
+        margin-bottom: 7px;
+        letter-spacing: -1px;
+    }
+
+    .subtitle {
+        color: var(--muted);
+        font-size: 15px;
+        margin-bottom: 25px;
+    }
+
+    .card {
+        background: var(--card);
+        border: 1px solid rgba(255,255,255,.08);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: 28px;
+        padding: 30px;
+        box-shadow: 0 25px 80px rgba(0,0,0,.45);
+    }
+
+    .label {
+        color: var(--muted);
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 8px;
+    }
+
+    .counter {
+        font-size: clamp(70px, 17vw, 120px);
+        font-weight: 800;
+        letter-spacing: -5px;
+        margin: 5px 0 3px;
+        background: linear-gradient(135deg, #fff, var(--accent2));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        word-break: break-all;
+    }
+
+    .today {
+        color: var(--muted);
+        font-size: 14px;
+        margin-bottom: 25px;
+    }
+
+    .status {
+        background: rgba(255,255,255,.045);
+        border: 1px solid rgba(255,255,255,.06);
+        border-radius: 16px;
+        padding: 14px;
+        margin-bottom: 22px;
+        font-size: 14px;
+        color: #b8bbc7;
+    }
+
+    .status span {
+        color: var(--accent2);
+        font-weight: bold;
+    }
+
+    .buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    button {
+        border: none;
+        border-radius: 15px;
+        padding: 14px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        color: white;
+        transition: .2s;
+    }
+
+    button:hover {
+        transform: translateY(-2px);
+    }
+
+    .primary {
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        box-shadow: 0 10px 25px rgba(124,92,255,.2);
+    }
+
+    .secondary {
+        background: rgba(255,255,255,.07);
+        border: 1px solid rgba(255,255,255,.08);
+    }
+
+    .settings {
+        margin-top: 18px;
+        text-align: left;
+        background: rgba(255,255,255,.035);
+        border-radius: 20px;
+        padding: 20px;
+    }
+
+    .settings h2 {
+        font-size: 17px;
+        margin-bottom: 15px;
+    }
+
+    .field {
+        margin-bottom: 14px;
+    }
+
+    .field label {
+        display: block;
+        color: var(--muted);
+        font-size: 12px;
+        margin-bottom: 7px;
+    }
+
+    input[type="number"] {
+        width: 100%;
+        background: rgba(0,0,0,.25);
+        border: 1px solid rgba(255,255,255,.1);
+        border-radius: 12px;
+        padding: 13px;
+        color: white;
+        outline: none;
+        font-size: 15px;
+    }
+
+    input[type="number"]:focus {
+        border-color: var(--accent);
+    }
+
+    .color-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    input[type="color"] {
+        width: 55px;
+        height: 42px;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+    }
+
+    .color-text {
+        color: var(--muted);
+        font-size: 13px;
+    }
+
+    .save {
+        width: 100%;
+        margin-top: 5px;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+    }
+
+    .footer {
+        color: #5e6270;
+        font-size: 11px;
+        margin-top: 18px;
+    }
+
+    .pulse {
+        animation: pulse .45s ease;
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.06); }
+        100% { transform: scale(1); }
+    }
+
+    @media(max-width: 450px) {
+        .card {
+            padding: 22px;
+        }
+
+        h1 {
+            font-size: 28px;
+        }
+
+        .buttons {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="logo">🔢</div>
+
+    <h1>Günlük Sayaç</h1>
+    <div class="subtitle">Her gün otomatik olarak bir adım ileri.</div>
+
+    <div class="card">
+
+        <div class="label">Mevcut Sayı</div>
+
+        <div id="counter" class="counter">0</div>
+
+        <div id="today" class="today"></div>
+
+        <div class="status">
+            Son güncelleme:
+            <span id="lastUpdate">Henüz başlatılmadı</span>
+        </div>
+
+        <div class="buttons">
+            <button class="primary" onclick="manualIncrease()">
+                ＋ 1 Artır
+            </button>
+
+            <button class="secondary" onclick="resetCounter()">
+                ↻ Sıfırla
+            </button>
+        </div>
+
+        <div class="settings">
+
+            <h2>⚙️ Sayaç Ayarları</h2>
+
+            <div class="field">
+                <label>Başlangıç / Mevcut Sayı</label>
+                <input
+                    type="number"
+                    id="startNumber"
+                    placeholder="Örn. 100"
+                >
+            </div>
+
+            <div class="field">
+                <label>Sayaç Rengi</label>
+
+                <div class="color-row">
+                    <input
+                        type="color"
+                        id="colorPicker"
+                        value="#7c5cff"
+                    >
+
+                    <div class="color-text">
+                        Kendi rengini seç
+                    </div>
+                </div>
+            </div>
+
+            <button class="save" onclick="saveSettings()">
+                Ayarları Kaydet
+            </button>
+
+        </div>
+
+    </div>
+
+    <div class="footer">
+        Veriler bu cihazda tarayıcı tarafından saklanır.
+    </div>
+
+</div>
+
+<script>
+
+    // ==============================
+    // VERİLERİ AL
+    // ==============================
+
+    let counter = parseInt(localStorage.getItem("dailyCounter"));
+
+    if (isNaN(counter)) {
+        counter = 0;
+    }
+
+    let lastDate = localStorage.getItem("dailyCounterDate");
+
+    let savedColor = localStorage.getItem("dailyCounterColor");
+
+    if (savedColor) {
+        document.documentElement.style.setProperty("--accent", savedColor);
+        document.getElementById("colorPicker").value = savedColor;
+    }
+
+
+    // ==============================
+    // BUGÜNÜN TARİHİ
+    // ==============================
+
+    function getToday() {
+
+        const now = new Date();
+
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        const day = String(now.getDate()).padStart(2, "0");
+
+        return `${year}-${month}-${day}`;
+    }
+
+
+    // ==============================
+    // TARİHİ GÖSTER
+    // ==============================
+
+    function showDate() {
+
+        const now = new Date();
+
+        const options = {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric"
+        };
+
+        document.getElementById("today").textContent =
+            now.toLocaleDateString("tr-TR", options);
+    }
+
+
+    // ==============================
+    // SAYACI GÜNCELLE
+    // ==============================
+
+    function updateDisplay(animation = false) {
+
+        const element = document.getElementById("counter");
+
+        element.textContent = counter.toLocaleString("tr-TR");
+
+        if (animation) {
+
+            element.classList.remove("pulse");
+
+            void element.offsetWidth;
+
+            element.classList.add("pulse");
+        }
+
+        localStorage.setItem("dailyCounter", counter);
+
+        if (lastDate) {
+
+            const date = new Date(lastDate + "T00:00:00");
+
+            document.getElementById("lastUpdate").textContent =
+                date.toLocaleDateString("tr-TR");
+        }
+    }
+
+
+    // ==============================
+    // GÜN KONTROLÜ
+    // ==============================
+
+    function checkNewDay() {
+
+        const today = getToday();
+
+        // İlk kez çalışıyorsa tarihi kaydet
+        if (!lastDate) {
+
+            lastDate = today;
+
+            localStorage.setItem(
+                "dailyCounterDate",
+                lastDate
+            );
+
+            updateDisplay();
+
+            return;
+        }
+
+
+        // Kaç gün geçtiğini hesapla
+        const last = new Date(lastDate + "T00:00:00");
+        const current = new Date(today + "T00:00:00");
+
+        const difference =
+            Math.floor(
+                (current - last) /
+                (1000 * 60 * 60 * 24)
+            );
+
+
+        // Yeni gün varsa her geçen gün için +1
+        if (difference > 0) {
+
+            counter += difference;
+
+            lastDate = today;
+
+            localStorage.setItem(
+                "dailyCounterDate",
+                lastDate
+            );
+
+            updateDisplay(true);
+        }
+    }
+
+
+    // ==============================
+    // ELLE +1
+    // ==============================
+
+    function manualIncrease() {
+
+        counter++;
+
+        lastDate = getToday();
+
+        localStorage.setItem(
+            "dailyCounterDate",
+            lastDate
+        );
+
+        updateDisplay(true);
+    }
+
+
+    // ==============================
+    // AYARLARI KAYDET
+    // ==============================
+
+    function saveSettings() {
+
+        const numberInput =
+            document.getElementById("startNumber");
+
+        const colorInput =
+            document.getElementById("colorPicker");
+
+        const number =
+            parseInt(numberInput.value);
+
+        const color =
+            colorInput.value;
+
+
+        if (!isNaN(number)) {
+
+            counter = number;
+
+            lastDate = getToday();
+
+            localStorage.setItem(
+                "dailyCounter",
+                counter
+            );
+
+            localStorage.setItem(
+                "dailyCounterDate",
+                lastDate
+            );
+        }
+
+
+        // Rengi kaydet
+        document.documentElement.style.setProperty(
+            "--accent",
+            color
+        );
+
+        localStorage.setItem(
+            "dailyCounterColor",
+            color
+        );
+
+        updateDisplay(true);
+
+        numberInput.value = "";
+
+        alert("Ayarlar kaydedildi! ✅");
+    }
+
+
+    // ==============================
+    // SIFIRLA
+    // ==============================
+
+    function resetCounter() {
+
+        const answer =
+            confirm(
+                "Sayaç sıfırlansın mı?"
+            );
+
+        if (!answer) return;
+
+        counter = 0;
+
+        lastDate = getToday();
+
+        localStorage.setItem(
+            "dailyCounter",
+            counter
+        );
+
+        localStorage.setItem(
+            "dailyCounterDate",
+            lastDate
+        );
+
+        updateDisplay(true);
+    }
+
+
+    // ==============================
+    // BAŞLANGIÇ
+    // ==============================
+
+    showDate();
+
+    checkNewDay();
+
+    updateDisplay();
+
+
+    // ==============================
+    // TARAYICI AÇIK KALIRSA
+    // YENİ GÜNÜ KONTROL ET
+    // ==============================
+
+    setInterval(function() {
+
+        checkNewDay();
+
+        showDate();
+
+    }, 60000);
+
+</script>
+
+</body>
+</html>
